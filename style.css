@@ -1,0 +1,136 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    font-family: sans-serif;
+    min-height: 100vh;
+    background-color: #f1f1f1;
+}
+
+h1{
+    text-align: center;
+    font-weight: bold;
+    font-size: 48px;
+    padding-top: 50px;
+    padding-bottom: 20px;
+    line-height: 1.2;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+form{
+    border: 1px solid #ccc;
+    margin: 20px auto;
+    max-width:500px;
+    display: flex;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    background: #fff;
+}
+
+form input{
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    font-size: 18px;
+    color: #444;
+}
+
+form input::placeholder{
+    color: #777;
+}
+
+form input:focus{
+    outline: none;
+}
+
+form .add-btn{
+    background-color: black;
+    color: #fff;
+    font-size: 18px;
+    padding: 10px 12px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 120px;
+    transition: all 0.3s;
+}
+
+form .add-btn:hover{
+    opacity: 0.8;
+}
+
+#msg{
+    color: red;
+    margin: 10px 0;
+    text-align: center;
+}
+
+ul{
+    list-style: none;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+ul li{
+    background: #fff;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 5px;
+}
+
+ul li .left, ul li .right{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+ul li .left p{
+    font-size: 16px;
+    color: #444;
+}
+
+ul li .right button{
+    color: #fff;
+    font-size: 14px;
+    padding: 10px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s;
+}
+
+ul li .right button:hover{
+    opacity: 0.8;
+}
+
+ul li .right .edit-btn{
+    background-color: teal;
+}
+
+ul li .right .delete-btn{
+    background-color: tomato;
+}
+
+
+  
+
+@media(max-width:600px){
+    body{
+        padding: 10px;
+    }
+    form .add-btn{
+      font-size: 15px;
+    }
+}
+
