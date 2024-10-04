@@ -4,9 +4,23 @@ const inputEl = document.querySelector('#input');
 const listEl = document.querySelector('#list');
 const msgEl = document.querySelector('#msg');
 
+let tasks = []; // Array to store tasks
 
-const tasks = []; // Array to store tasks
-
+const renderTask = () => {
+  const renderedHTML = tasks.map((task) => {
+    return `<li data-id="${task.id}">
+            <div class="left">
+                <input type="checkbox" ${task.completed ? "checked" : ""} id='checkbox' onclick="toggleTask(${task.id})">
+                <p id='text'  style="text-decoration: ${task.completed ? 'line-through' : 'none'}">${task.taskName}</p>
+            </div>
+            <div class="right">
+              <button class="edit-btn" onclick="editTask(${task.id})">Edit</button>
+              <button class="delete-btn" onclick="deleteTask(${task.id})">Delete</button>
+            </div>
+          </li>`;
+  }).join('');
+  listEl.innerHTML = renderedHTML;
+}
 
 // Function to add a task
 const addTask = () => {
@@ -28,81 +42,79 @@ const addTask = () => {
   }
 
   // Generate a unique id for the task
-  const newTask = { id: Math.floor(Math.random() * 10000), taskName: inputValue };
-  
-  // Create a new list item
-  const liEl = document.createElement('li');
-  liEl.setAttribute('data-id', newTask.id);
-
-  liEl.innerHTML = `
-    <div class="left">
-      <input type="checkbox" id='checkbox'>
-      <p id='text'>${inputValue}</p>
-    </div>
-    <div class="right">
-      <button class="edit-btn" onclick="editTask(${newTask.id})">Edit</button>
-      <button class="delete-btn" onclick="deleteTask(${newTask.id})">Delete</button>
-    </div>
-  `;
-
-  listEl.appendChild(liEl);
-  inputEl.value = ""; 
+  const newTask = { 
+    id: Math.floor(Math.random() * 10000), 
+    taskName: inputValue, 
+    completed:false
+  };
   
   // Add the task to the tasks array
   tasks.push(newTask);
-  
-  const checkbox = liEl.querySelector('#checkbox');
-  const text = liEl.querySelector('#text');
-  
-  // Add event listener to the checkbox for line-through functionality
-  checkbox.addEventListener('click', (e) => {
-    if (e.target.checked) {
-      text.style.textDecoration = "line-through";
-    } else {
-      text.style.textDecoration = "none";
-    }
-  });
+  inputEl.value = "";
+  console.log(tasks)
+  renderTask()
 };
 
-// Function to delete task by id
+//Function to delete task by id
 function deleteTask(taskId) {
-  const updateTask = tasks.filter((task) => task.id !== taskId);
-  
-  // Remove the corresponding task from the DOM
-  const taskEl = document.querySelector(`li[data-id='${taskId}']`);
-  if (taskEl) {
-    taskEl.remove();
+  const taskIndex=tasks.findIndex((task) => task.id===taskId)
+  console.log(taskIndex)
+  if(taskIndex!==-1){
+    tasks.splice(taskIndex,1)
   }
+  renderTask()
+}
+
+
+function toggleTask(taskId) {
+  const taskIndex=tasks.findIndex((task) => task.id===taskId)
+  console.log(taskIndex)
+  if(taskIndex!==-1){
+    tasks[taskIndex].completed=!tasks[taskIndex].completed
+  }
+  console.log(tasks)
+  renderTask()
 }
 
 // Function to edit task by id
 function editTask(taskId) {
-  const taskIndex = tasks.findIndex(task => task.id === taskId); 
-  if (taskIndex === -1) return; 
+  const taskIndex = tasks.findIndex(task => task.id === taskId);
+  if (taskIndex === -1) return;
 
-  const newTaskName = prompt("Edit your task:", tasks[taskIndex].taskName); 
+  const taskEl = document.querySelector(`li[data-id="${taskId}"]`);
+  const textEl = taskEl.querySelector("#text");
+  const editBtn = taskEl.querySelector(".edit-btn");
 
-  if (newTaskName !== null && newTaskName.trim() !== "") {
-    // Check for duplicate tasks with the same name
-    const existingTask = tasks.find(task => task.taskName === newTaskName);
-    console.log(existingTask);
-    if (existingTask && existingTask.id !== taskId) {
-      msgEl.innerHTML = "Task already exists!";
-      return; 
-    }
+  // Check if the task is in edit mode (input field is visible)
+  const isEditing = taskEl.querySelector("input[type='text']");
 
-    // Update the task name in the array
-    tasks[taskIndex].taskName = newTaskName.trim();
-
-    // Update the text in the UI
-    const taskEl = document.querySelector(`li[data-id='${taskId}']`);
-    if (taskEl) {
-      const textEl = taskEl.querySelector('#text');
-      textEl.innerText = newTaskName.trim();
-      msgEl.innerHTML = ""; 
-    }
+  if (!isEditing) {
+    // Convert the task name into an input field
+    textEl.innerHTML = `<input type="text" id="edit-input" value="${tasks[taskIndex].taskName}" />`;
+    editBtn.innerText = "Save"; // Change the button text to "Save"
   } else {
-    msgEl.innerHTML = "Task name cannot be empty!";
+    // Get the new task name from the input field
+    const editInput = taskEl.querySelector("#edit-input");
+    const newTaskName = editInput.value.trim();
+
+    // Validate the new task name
+    if (newTaskName !== "") {
+      const existingTask = tasks.find(task => task.taskName === newTaskName);
+      if (existingTask && existingTask.id !== taskId) {
+        msgEl.innerHTML = "Task with this name already exists!";
+        return;
+      }
+
+      // Update the task in the array
+      tasks[taskIndex].taskName = newTaskName;
+      msgEl.innerHTML = ""; // Clear any error message
+
+      // Revert the input field back to normal text
+      textEl.innerText = newTaskName;
+      editBtn.innerText = "Edit"; // Change the button text back to "Edit"
+    } else {
+      msgEl.innerHTML = "Task name cannot be empty!";
+    }
   }
 }
 
